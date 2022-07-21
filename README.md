@@ -63,7 +63,8 @@ Now there should be a device access registered under `example` with the device `
 
 ## authorize drivers
 
-Authorize drivers can be used to replace the build-in user management with another one. For example an LDAP client or something similar.
+Authorize drivers can be used to replace the build-in user management with another one. For example an LDAP client or something similar. An example of such an authorize driver is provided in 
+the folder `authorize`.
 
 The example authorize driver will handle all user management in memory (thus not persistent) and has an initial user `admin` with password `admin` and access level `Expert`. The driver 
 supports user management. For more details have a look at the comments in the source code.
@@ -111,7 +112,7 @@ Now you should be able to log into the gateway using the username and password `
 ## storage drivers
 
 Storage drivers can be used to store the logged property values and received messages to another storage as the default SQLite database. This can be another database or even a cloud-based
-IoT system.
+IoT system. An example of such a storage driver is provided in the folder `storage`.
 
 The example storage driver will not store any property values for simplicity and store the device messages only in memory (non-persistent).
 
@@ -137,7 +138,7 @@ Now you need to stop the gateway, change the gateway configuration and start the
 > sudo systemctl stop sigatewayd 
 ```
 
-*Change the configuration file (only Authorize section is shown)* **/etc/openstuder/gateway.conf**:
+*Change the configuration file (only Storage section is shown)* **/etc/openstuder/gateway.conf**:
 
 ```
 [Storage]
@@ -151,3 +152,48 @@ driver = ExampleStorage
 ```
 
 Now the new storage driver is active and only device messages are stored in memory.
+
+
+## (protocol) extension drivers
+
+Protocol extension can be installed on the gateway. These can offer various additional functionality like for example Key-Value storage for web-sites, user management or WiFi setup.
+You can add your own protocol extension. An example of such an extension driver is provided in the folder `extension`. 
+
+The example extension driver will provide the command `echo` which will return the same content (body in case of WebSocket protocol,  3rd parameter in case of Bluetooth protocol) when called.
+
+You can change into the example directory and build the driver:
+
+```
+> cd extension
+> cmake -B build .
+> cmake --build build
+```
+
+If you want to install the driver, just build the software like above and do:
+
+```
+> sudo cmake --build build --target install
+```
+
+Now you need to stop the gateway, change the gateway configuration and start the gateway again in order to enable the example protocol extension:
+
+*Stop the gateway software*:
+
+```
+> sudo systemctl stop sigatewayd 
+```
+
+*Change the configuration file (Add to the end of file)* **/etc/openstuder/extensions.conf**:
+
+```
+[ExampleExtension]
+toto = 1
+```
+
+*Start the gateway software*:
+
+```
+> sudo systemctl start sigatewayd 
+```
+
+Now you should be able to call the command `echo` on the extension `ExampleExtension` which returns a copy of the body(WebSocket) or 3rd string parameter (Bluetooth).
