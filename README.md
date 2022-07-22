@@ -13,6 +13,18 @@ In order to be able to build any of these examples, you need first to **install 
 > sudo apt install openstuder-gateway
 ```
 
+Then you need to install all development packages needed to build your own driver:
+
+```
+> sudo apt update
+> sudo apt install \
+gcc g++ gdb cmake ninja-build \
+qt5-default \
+libqt5serialport5-dev libqt5serialbus5-dev libqt5serialbus5-plugins \
+libqt5websockets5-dev \
+qtconnectivity5-dev
+```
+
 ## device access drivers
 
 Device access drivers allow to interact with real devices and provide self-describing properties for all devices supported by that device access driver. The Gateway
